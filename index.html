@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Previsão de Vendas - Empresa XYZ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+</head>
+<body>
+    <h1>Previsão de Vendas</h1>
+    <form id="predict-form">
+        <label for="dia">Dia:</label>
+        <input type="number" id="dia" name="dia"><br><br>
+        <label for="mes">Mês:</label>
+        <input type="number" id="mes" name="mes"><br><br>
+        <label for="ano">Ano:</label>
+        <input type="number" id="ano" name="ano"><br><br>
+        <button type="submit">Prever Vendas</button>
+    </form>
+    <h2 id="result"></h2>
+
+    <div id="gamification">
+        <h3>Gamificação</h3>
+        <p>Pontos Acumulados: <span id="points">0</span></p>
+        <p>Nível Atual: <span id="level">1</span></p>
+    </div>
+
+    <div id="payment">
+        <h3>Assinatura Premium</h3>
+        <button id="pay-button">Realizar Pagamento (Simulado)</button>
+        <p id="payment-status"></p>
+    </div>
+
+    <script>
+        let points = 0;
+        let level = 1;
+
+        const form = document.getElementById('predict-form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const dia = document.getElementById('dia').value;
+            const mes = document.getElementById('mes').value;
+            const ano = document.getElementById('ano').value;
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify([{ dia: Number(dia), mes: Number(mes), ano: Number(ano) }]),
+            });
+
+            const data = await response.json();
+            document.getElementById('result').innerText = `Previsão de Vendas: ${data[0]}`;
+
+            points += 10;
+            if (points % 50 === 0) {
+                level += 1;
+            }
+            document.getElementById('points').innerText = points;
+            document.getElementById('level').innerText = level;
+        };
+
+        const payButton = document.getElementById('pay-button');
+        payButton.onclick = () => {
+            document.getElementById('payment-status').innerText = 'Pagamento realizado com sucesso! (Simulado)';
+        }
+    </script>
+</body>
+</html>
